@@ -1,12 +1,18 @@
 from flask import Flask, jsonify, json
 app = Flask(__name__)
+import logging
+
+# logging.basicConfig(filename='record.log', level=logging.DEBUG, format=f'%(asctime)s %(levelname)s %(name)s %(threadName)s : %(message)s')
+logging.basicConfig(filename='app.log', level=logging.DEBUG, format=f'%(asctime)s, %(message)s')
 
 @app.route("/")
 def hello():
+    app.logger.info('/  endpoint was reached')
     return "Hello World!"
 
 @app.route('/status')
 def get_status():
+    app.logger.info('/status  endpoint was reached')
     status = "OK -healthy"
     return jsonify({
         'result': status
@@ -15,6 +21,7 @@ def get_status():
 
 @app.route('/metrics')
 def get_metrics():
+    app.logger.info('/metrics  endpoint was reached')
     all_users = 250
     active_users = 32
     return jsonify({
@@ -46,6 +53,7 @@ def metrics():
 
 
 if __name__ == "__main__":
-    app.run(host='0.0.0.0')
+    logging.basicConfig(filename='app.log',level=logging.DEBUG)
+    app.run(host='0.0.0.0')#, debug=True)
 
 
