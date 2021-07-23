@@ -35,3 +35,42 @@ docker logs 669670bf3e27
 #docker stop {{ CONTAINER_ID }}
 docker stop 669670bf3e27
 
+
+#Step8
+#Destribute docker image to public image registry such as: (like public github repositories)
+#docker hub , docker container registry and harbor
+#or private image registry such as: (like private github repositories you have control to set who do what on which)
+
+#Step8 - A
+#container ID is not human readable so you have to tag the image with version and name of image to have it as container ID
+# tag an image
+# SOURCE_IMAGE[:TAG]  - required and the tag is optional; define the name of an image on the current machine 
+# TARGET_IMAGE[:TAG] -  required and the tag is optional; define the repository, name, and version of an image
+docker tag SOURCE_IMAGE[:TAG] TARGET_IMAGE[:TAG]
+# tag the `python-helloworld` image, to be pushed 
+# in the `pixelpotato` repository, with the `python-helloworld` image name
+# and version `v1.0.0`
+docker tag python-helloworld pixelpotato/python-helloworld:v1.0.0
+#first python-helloworld is the name of the source image on the local machine
+#pixelpotato is the name of the repository in the docker hub
+#second python-helloworld is the name of the image in the docker hub
+#v1.0.0 is the version of the image
+
+#Step8 - B
+# push an image to a registry 
+# NAME[:TAG] - required and the tag is optional; name, set the image name to be pushed to the registry
+docker push NAME[:TAG]
+
+# push the `python-helloworld` application in version v1.0.0 
+# to the `pixelpotato` repository in DockerHub
+docker push pixelpotato/python-helloworld:v1.0.0
+
+#by default docker will OCI or open container initiative compliant image
+#OCI aims to standardize image formats making sure that this image can be executed on 
+#any OCI-Compliant run time such as Docker or CRIO.
+#While Docker is the most widely used mechanism to generate images , it has security issue which is the 
+#opened socket of docker daemon inside docker container to execute the image so there is another tools to build images which is more
+#secure and easier and have no exposed docker sockets
+# *Buildpacks : without dockerfile , and automaticaly identify dependencies following with the best practices
+# *Podman
+# *Buildah
