@@ -19,6 +19,8 @@ docker run -d -p 5111:5000 python-helloworld   #  portinOS:portindockerAsInterfa
 #open web browser to check app http://127.0.0.1:5111
 
 #Step5
+#List local docker images
+docker images
 # to list running containers
 docker container ls   
 #Result
@@ -50,20 +52,23 @@ docker tag SOURCE_IMAGE[:TAG] TARGET_IMAGE[:TAG]
 # tag the `python-helloworld` image, to be pushed 
 # in the `pixelpotato` repository, with the `python-helloworld` image name
 # and version `v1.0.0`
-docker tag python-helloworld pixelpotato/python-helloworld:v1.0.0
+docker tag python-helloworld hasanmhsh/python-helloworld:v1.0.0
 #first python-helloworld is the name of the source image on the local machine
 #pixelpotato is the name of the repository in the docker hub
 #second python-helloworld is the name of the image in the docker hub
 #v1.0.0 is the version of the image
 
 #Step8 - B
+#before pushing image you must login to your account using web brouser on docker hub and create empty repository with name python-helloworld
+#then login within terminal by using this command
+docker login
 # push an image to a registry 
 # NAME[:TAG] - required and the tag is optional; name, set the image name to be pushed to the registry
 docker push NAME[:TAG]
 
 # push the `python-helloworld` application in version v1.0.0 
 # to the `pixelpotato` repository in DockerHub
-docker push pixelpotato/python-helloworld:v1.0.0
+docker push hasanmhsh/python-helloworld:v1.0.0
 
 #by default docker will OCI or open container initiative compliant image
 #OCI aims to standardize image formats making sure that this image can be executed on 
