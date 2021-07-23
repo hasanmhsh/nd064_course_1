@@ -12,3 +12,7 @@ go run main.go
 ```
 
 Access the application on: http://127.0.0.1:6111/
+
+To realease linux binary file from go file
+go build main.go
+./main
