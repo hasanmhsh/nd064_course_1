@@ -1,0 +1,21 @@
+#While inside of the opensuse vagrant box (inside of "vagrant ssh"), docker needs to be installed and after that you can interact with dockerhub
+sudo zypper install -y docker git
+sudo usermod -G docker -a $USER
+sudo systemctl start docker
+#Exit the vagrant ssh session with exit and enter it again so the vagrant user becomes the member of docker group.
+#vagrant@localhost:/vagrant> id
+#uid=1000(vagrant) gid=1000(vagrant) groups=1000(vagrant),478(docker)
+#From there, after docker login you can build and push images to dockerhub. For example pull the "hello-world" docker image
+docker login
+docker pull hello-world
+Using default tag: latest
+latest: Pulling from library/hello-world
+b8dfde127a29: Pull complete 
+Digest: sha256:df5f5184104426b65967e016ff2ac0bfcd44ad7899ca3bbcf8e44e4461491a9e
+Status: Downloaded newer image for hello-world:latest
+docker.io/library/hello-world:latest
+Tag it with your dockerhub repository
+vagrant@localhost:/vagrant> docker tag hello-world:latest mydockerhubuser/test:latest
+Push it
+docker push mydockerhubuser/test:latest
+and check it appears on dockerhub https://hub.docker.com/r/mydockerhubuser/test

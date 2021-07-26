@@ -20,7 +20,7 @@ RUN go mod init helloworld
 RUN go build -o helloworld
 
 
-EXPOSE 6111
+EXPOSE 6112
 # provide a command to run on container start. 
 # For example, start the `app.py` application.
 CMD [ "./helloworld" ]

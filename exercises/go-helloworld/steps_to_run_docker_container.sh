@@ -27,8 +27,9 @@ docker container ls
 #CONTAINER ID   IMAGE               COMMAND            CREATED         STATUS         PORTS                                       NAMES
 #669670bf3e27   go-helloworld   "go3 app.py"   3 minutes ago   Up 3 minutes   0.0.0.0:5000->5000/tcp, :::5000->5000/tcp   stoic_mayer
 
-#To delete docker image
-docker rmi -f go-helloworld
+#To delete docker image and all of its tags
+# docker rmi -f go-helloworld
+docker image rm -f [image-ID]
 
 #Step 6
 #To retrieve the Docker container logs use :
