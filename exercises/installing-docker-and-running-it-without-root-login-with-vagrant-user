@@ -11,7 +11,7 @@ docker pull hello-world
 Using default tag: latest
 latest: Pulling from library/hello-world
 b8dfde127a29: Pull complete 
-Digest: sha256:df5f5184104426b65967e016ff2ac0bfcd44ad7899ca3bbcf8e44e4461491a9e
+Digest: sha256:secret
 Status: Downloaded newer image for hello-world:latest
 docker.io/library/hello-world:latest
 Tag it with your dockerhub repository
