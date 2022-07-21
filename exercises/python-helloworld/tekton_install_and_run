@@ -111,7 +111,7 @@ vagrant plugin install vagrant-scp
 # then i downloaded the binary rpm package of conntrack from this url   https://software.opensuse.org//download.html?project=openSUSE%3ALeap%3A15.2&package=conntrack-tools
 # then i scp the rpm package from my local laptop by this command and copied it tho the same folder which contain vagrant file
 # then copy it from my laptop to opensuse on vbox using this command 
-scp ./conntrack.xxx.rpm :~/
+vagrant scp ./conntrack.xxx.rpm :~/
 
 #but i used this command VVV directly to install contrack tools because this package  ^^^ need dependencies to install first
 zypper install conntrack-tools
