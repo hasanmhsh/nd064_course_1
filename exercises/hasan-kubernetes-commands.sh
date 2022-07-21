@@ -64,9 +64,22 @@ kubectl get deploy
 #This output "No resources found in default namespace." means no deployment , our cluster is clear
 
 #List all replica sets
+#!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! Replicae set important note!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+# Replica set is just collection or set or array of additional running instances of the same pod (pod multiplication) to act as hot standby for pod to maintain availability (backup)
+# Real example (replica set consists of 5 pods)
+# localhost:/home/vagrant # kubectl get po -n demo
+# NAME                       READY   STATUS      RESTARTS   AGE
+# busybox-6cf8756958-rqxxr   0/1     Completed   4          2m16s
+# busybox-6cf8756958-bhklr   0/1     Completed   4          2m16s
+# busybox-6cf8756958-jcvjj   0/1     Completed   4          2m16s
+# busybox-6cf8756958-5rdlh   0/1     Completed   4          2m16s
+# busybox-6cf8756958-g5g2f   0/1     Completed   4          2m16s
+# localhost:/home/vagrant # kubectl get rs -n demo
+# NAME                 DESIRED   CURRENT   READY   AGE
+# busybox-6cf8756958   5         5         0       2m21s
 kubectl get rs
 
-#List all pods
+#List all pods (pod is the running container with app)
 kubectl get po
 
 #image will be pulled auomatically from docker hub during deployment creation
@@ -83,6 +96,7 @@ kubectl get po
 #to access go-helloworld app from your local host , you need to set port forward port forward work on the same vm OS not host OS
 kubectl port-forward po/[pod-name] app-port-number:port-number-exposed-to-local-host  #get pod name by "kubectl get po"
 kubectl port-forward po/go-helloworld-79fcd5dd4-mdknl 6111:6111
+kubectl port-forward po/go-helloworld-585d5bdf5d-gxdqk 6111:6111
 
 #delete deployment 
 kubectl delete deploy [deployment-name]
@@ -342,3 +356,142 @@ kubectl logs RESOURCE/NAME [FLAGS]
 kubectl delete RESOURCE NAME
 
 # ===============================================End of useful kubernetes commands===============================
+
+
+# !important
+# !important
+# The live cluster configuration with command live above called imperative management technique
+# Configuring the objects in cluster with manifest config file is called declerative management technique
+# YAML is a format of files to store data such as XML , JSON
+# ========START========Declarative Kubernetes Manifests======================================================
+# Imperative config for object in cluster suits development 
+# Declerative config for object in cluster suits production and used YAML structure manifests
+# YAML manifest files is stored locally in cluster
+
+# YAML Manifest structure
+# A YAML manifest consists of 4 obligatory sections:
+#     apiversion - Kubernetes API version used to create a Kubernetes object
+#     kind - object type to be created or configured {{ resource }} (deployment, pod, replica set, service, ingress, .......etc)
+#     metadata - stores data that makes the object identifiable, such as its name, namespace, and labels
+#     spec - defines the desired configuration state of the resource
+# For example to manifest file in yaml format check "./deploment_manifest_example.yaml" , "./service_manifest_example.yaml"
+
+# To get the YAML manifest of any resource within the cluster
+Kubectl  get  {{ resource }}    {{ resource_name }}     -o  yaml
+
+# create a resource defined in the YAML manifests with the name manifest.yaml
+kubectl apply -f manifest.yaml   #-f mean file
+
+# delete a resource defined in the YAML manifests with the name manifest.yaml
+kubectl delete -f manifest.yaml
+
+# Kubernetes documentation is the best place to explore the available parameters for YAML manifests. 
+# However, a support YAML template can be constructed using kubectl commands. 
+# This is possible by using the --dry-run=client and -o yamlflags which instructs that the command 
+# should be evaluated on the client-side only and output the result in YAML format.
+
+# get YAML template for a resource 
+kubectl create RESOURCE [REQUIRED FLAGS] --dry-run=client -o yaml
+
+# For example, to get the template for a Deployment resource, we need to use the create command, 
+# pass the required parameters, and associated with the --dry-run and -o yaml flags. 
+# This outputs the base template, which can be used further for more advanced configuration.
+
+# get the base YAML templated for a demo Deployment running a nxing application
+kubectl create deploy demo --image=nginx --dry-run=client -o yaml
+
+
+# ---------------------------------------------------------------------------------------------------------
+# Now we want to create a deployment and namespace using YAML manifests
+# First list all namespaces in cluster
+kubectl get ns
+
+# Create "demo" namespace using YAML manifest file
+
+# the following command has no effect it is just generate string for template to create namespace resource check before save in file
+kubectl create ns demo --dry-run=client -o yaml
+
+# Construct YAML base tempelate for creating "demo" namespace then store it in "namespace.yaml" file using the following command
+kubectl create ns demo --dry-run=client -o yaml > namespace.yaml
+
+# Create "demo" namespace using declarative approach using "namespace.yaml" manifest yaml file with the following command
+kubectl apply -f namespace.yaml
+
+# /////////////////////////
+# Create "busybox" deployment using YAML manifest file
+# We will use busybox image which is buplic image on dockerhub used for testing publicitly
+kubectl create deploy busybox --image=busybox -r 5 -n demo --dry-run=client -o yaml
+kubectl create deploy busybox --image=busybox -r 5 -n demo --dry-run=client -o yaml > deploy.yaml
+
+# Create "busybox" deployment using declarative approach using "deploy.yaml" manifest yaml file with the following command
+kubectl apply -f deploy.yaml
+
+# Verify
+kubectl get deploy -n demo
+kubectl get po -n demo
+kubectl get rs -n demo
+
+
+
+
+# =================================Exercise=============================================
+# Exercise: Declarative Kubernetes Manifests
+
+# Kubernetes is widely known for its imperative and declarative management techniques. In the previous exercise, you have deployed the following resources using the imperative approach. Now deploy them using the declarative approach.
+
+#     a namespace
+#         name: demo
+#         label: tier: test
+
+#     a deployment:
+#         image: nginx:alpine
+#         name:nginx-apline
+#         namespace: demo
+#         replicas: 3
+#         labels: app: nginx, tag: alpine
+
+#     a service:
+#         expose the above deployment on port 8111
+#         namespace: demo
+
+#     a configmap:
+#         name: nginx-version
+#         containing key-value pair: version=alpine
+#         namespace: demo
+
+# Note: Nginx is one of the public Docker images, that you can access and use for your exercises or testing purposes.
+
+
+
+
+# Solution: Declarative Kubernetes Manifests
+# Declarative Approach
+
+# The declarative approach consists of using a full YAML definition of resources. As well, with this approach, you can perform directory level operations.
+
+# Examine the manifests for all of the resources in the exercises/manifests.
+
+# To create the resources, use the following command:
+
+# kubectl apply -f exercises/manifests/
+
+# To inspect all the resources within the namespace, use the following command:
+
+# kubectl get all -n demo
+
+# NAME                                READY   STATUS    RESTARTS   AGE
+# pod/nginx-alpine-798fb5b8bb-8rzq9   1/1     Running   0          12s
+# pod/nginx-alpine-798fb5b8bb-ms28l   1/1     Running   0          12s
+# pod/nginx-alpine-798fb5b8bb-qgqb2   1/1     Running   0          12s
+
+# NAME                   TYPE        CLUSTER-IP       EXTERNAL-IP   PORT(S)    AGE
+# service/nginx-alpine   ClusterIP   10.109.197.180   <none>        8111/TCP   18s
+
+# NAME                           READY   UP-TO-DATE   AVAILABLE   AGE
+# deployment.apps/nginx-alpine   3/3     3            3           12s
+
+# NAME                                      DESIRED   CURRENT   READY   AGE
+# replicaset.apps/nginx-alpine-798fb5b8bb   3         3         3       12s
+
+# Kubernetes cheat sheet 
+# https://kubernetes.io/docs/reference/kubectl/cheatsheet/

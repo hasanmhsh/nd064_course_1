@@ -13,7 +13,14 @@ docker build -t python-helloworld lesson1/python-app
 #Step3
 #Run our new docker image within docker container by :
 # running the `python-helloworld` image, in detached mode and expose it on port `5111` 
+# Detached mode means running the docker container in the background such as using "nohup , &"
+# Also there is an command line options which is    -it    which means interactive shell to the container so we can execute forever commands
 docker run -d -p 5111:5000 python-helloworld   #  portinOS:portindockerAsInterfacedWithApp
+
+docker run --help #This command is used to show the full list of options of docker command
+
+# Display all running docker containers at the moment
+docker ps
 
 #Step 4
 #open web browser to check app http://127.0.0.1:5111
@@ -79,3 +86,11 @@ docker push hasanmhsh/python-helloworld:v1.0.0
 # *Buildpacks : without dockerfile , and automaticaly identify dependencies following with the best practices
 # *Podman
 # *Buildah
+
+
+
+# Delete local docker image
+sudo docker image rm -f 54bb61123406
+
+# To pull a docker image from docker hub to your local machine 
+docker pull hasanmhsh/python-helloworld:v1.0.0

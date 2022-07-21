@@ -1,1 +1,1 @@
-{"rsync":{"/vagrant":{"type":"rsync","guestpath":"/vagrant","hostpath":"/home/boodo/workspace/susue-challange/Lesson2/nd064_course_1/exercises","disabled":false,"__vagrantfile":true,"owner":"vagrant","group":"vagrant"}}}
+{"rsync":{"/vagrant":{"type":"rsync","guestpath":"/vagrant","hostpath":"E:/workspace/susue-challange/Lesson2/nd064_course_1/exercises","disabled":false,"__vagrantfile":true,"owner":"vagrant","group":"vagrant"}}}

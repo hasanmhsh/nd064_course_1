@@ -1,0 +1,146 @@
+https://redhat-scholars.github.io/tekton-tutorial/tekton-tutorial/setup.html
+
+
+
+#first install git
+sudo su
+zypper install git
+
+#then install kubectl krew plugin manager
+
+# https://krew.sigs.k8s.io/docs/user-guide/setup/install/
+# Note hasan in multi line command i made a script file then execute it and created .bashrc file in /root because it wasn't found then i add the command in krew install steps ten restart shell by exiting root then login again
+
+
+#install stern using this command
+kubectl krew install stern
+
+
+
+# Alternative methods to install from binaries  (i will alternatively install stern and install yq for first time)
+wget https://github.com/mikefarah/yq/releases/download/v4.26.1/yq_linux_amd64.tar.gz #Compressed or V
+wget https://github.com/mikefarah/yq/releases/download/v4.26.1/yq_linux_amd64  #this is binary to run directly such as script
+
+
+wget https://github.com/stern/stern/releases/download/v1.21.0/stern_1.21.0_linux_arm64.tar.gz    #Compressed or V
+wget https://github.com/wercker/stern/releases/download/1.21.0/stern_linux_amd64  #this is binary to run directly such as script
+
+# wget
+# Use wget to download the pre-compiled binaries:
+
+# Compressed via tar.gz
+# wget https://github.com/mikefarah/yq/releases/download/${VERSION}/${BINARY}.tar.gz -O - |\
+#   tar xz && mv ${BINARY} /usr/bin/yq
+# Plain binary
+# wget https://github.com/mikefarah/yq/releases/download/${VERSION}/${BINARY} -O /usr/bin/yq &&\
+#     chmod +x /usr/bin/yq
+
+
+#i have downloaded stern binary from github (note this is an alternative to instal by kubectl krew install stern
+update-alternatives --install /usr/bin/stern stern /home/vagrant/hasan/stern_linux_amd64 20
+
+update-alternatives --install /usr/bin/yq yq /home/vagrant/hasan/yq_linux_amd64 20  
+
+#Note there is a command to install binaries which is equal to update-alternatives install --->   sudo install yq_linux_amd64 /usr/local/bin/yq
+
+sudo install tkn /usr/local/bin/tkn
+
+
+
+
+# note that i have installe stern with both methods    kubectl krew install stern   , the second one
+
+
+
+zypper install httpie
+
+
+
+#install watch by download source code rep  https://gitlab.com/procps-ng/procps and follow install instructions in INSTALL.md
+
+
+
+#This VVV is required for this ^^^
+zypper install gettext-devel
+zypper install autoconf
+zypper install automake
+zypper install libtool
+zypper install --type pattern devel_basis
+
+
+#before start tekton tutorial minikube
+sudo usermod -aG docker $USER && newgrp docker
+#then add this options in tekton-tutorial/bin/start-minikube.sh
+#declare PLATFORM_SPECIFIC_OPTIONS="--driver=docker"
+
+
+# add this option   --base-image=kicbase/stable:v0.0.31     to minikube start command , you can check the latest version here -->   gcr.io/k8s-minikube/kicbase
+
+# install kubelet and kubeadm with snap   as here -->  https://snapcraft.io/install/kubelet/opensuse
+
+
+
+
+# ALL THis VVV steps to install kubedm and kubelet but important to know
+#to install kubelet and kubeadm first you have to install snap because it is used to install it
+
+sudo zypper addrepo --refresh https://download.opensuse.org/repositories/system:/snappy/openSUSE_Leap_15.2 snappy
+sudo zypper --gpg-auto-import-keys refresh
+sudo zypper dup --from snappy
+sudo zypper install snapd
+sudo systemctl enable --now snapd
+sudo systemctl start --now snapd
+reboot
+sudo systemctl enable --now snapd.apparmor
+sudo systemctl start --now snapd.apparmor
+reboot
+sudo snap install kubelet --classic
+sudo snap install kubeadm --classic
+reboot
+
+#stop k3s cluster if it is running
+/usr/local/bin/k3s-killall.sh
+
+
+kubeadm reset
+kubeadm init
+#conntrack is required for kubeadm init , i downloaded the rpm backage wich is sutable for my open suse distribution on my local labtop
+# then i have installed scp for vagrant by this command on my labtop    
+vagrant plugin install vagrant-scp
+
+# then i downloaded the binary rpm package of conntrack from this url   https://software.opensuse.org//download.html?project=openSUSE%3ALeap%3A15.2&package=conntrack-tools
+# then i scp the rpm package from my local laptop by this command and copied it tho the same folder which contain vagrant file
+# then copy it from my laptop to opensuse on vbox using this command 
+scp ./conntrack.xxx.rpm :~/
+
+#but i used this command VVV directly to install contrack tools because this package  ^^^ need dependencies to install first
+zypper install conntrack-tools
+
+#also kubeadm init  need to run containerd service
+systemctl enable containerd
+systemctl start containerd
+
+
+
+# ALL THis ^^^^^^^^^^^^^^ steps to install kubedm and kubelet is not working so you have to follow this instructions  https://kubernetes.io/docs/setup/production-environment/tools/kubeadm/install-kubeadm/
+# i Have succesfull install kubelet and kubeadm using this instructions https://kubernetes.io/docs/setup/production-environment/tools/kubeadm/install-kubeadm/
+# Iam using opensuse but the tutorial provide package manager installation with yum and apt only not zypper so i followed the non-package manager installation and cope all commands in script then run it
+
+# cgroup is control group so docker cgroup and nodes cgroup must be the same so we will use "systemd" cgroup
+# To set docker cgroup
+#add this field "exec-opts": ["native.cgroupdriver=systemd"]   --->    inside the json of /etc/docker/daemon.json   then restart docker service
+sudo systemctl restart docker
+
+
+
+
+
+# Note that kubelet and kubeadm must match the kubernetes cluster control plane version 
+minikube version
+
+
+
+
+#now i will deploy CI/CD pipline for my chat translatio service
+# First i pulled postgres db server docker image , i followed this tutorial https://adamtheautomator.com/postgres-to-kubernetes/
+
